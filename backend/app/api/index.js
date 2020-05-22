@@ -8,6 +8,7 @@ const {
 const logger = require('../components/logger')('api');
 
 const api = {
+    actors: require('./actors'),
 };
 
 for (let model in api) {
@@ -17,7 +18,7 @@ for (let model in api) {
 
         router.post(path, async (req, res) => {
             try {
-                let data = await handler(req.body, req.session.user);
+                let data = await handler(req.body);
                 res.json({
                     success: true,
                     data

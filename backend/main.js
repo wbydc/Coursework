@@ -14,12 +14,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(router);
 
-app.use((error, req, res, next) => {
-    res.json({
-        success: false,
-        error: 500
-    });
-    logger.error(error);
+app.use((req, res, next) => {
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 http.createServer(app).listen(config.server.port, () => {

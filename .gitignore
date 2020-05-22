@@ -2,7 +2,7 @@ node_modules
 package-lock.json
 .vscode
 
-public/*.bundle.*
+backend/public/*.bundle.*
 logs
 
 .config.js
