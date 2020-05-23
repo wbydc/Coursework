@@ -34,8 +34,31 @@ module.exports = {
     },
 
     getList: async () => {
-        let result = (await db.query(`select actor_id, firstname, lastname from actors where actor_id > 0 order by actor_id desc`)).rows;
+        let result = (await db.query(`select actor_id, concat(firstname, ' ', lastname) as name from actors where actor_id > 0 order by actor_id desc`)).rows;
         return result;
+    },
+
+    update: async (actor_id, firstname, lastname, middlename, rank, experience) => {
+        let res = await db.query(`
+            update actors set
+                firstname = $2,
+                lastname = $3,
+                middlename = $4,
+                rank = $5,
+                experience = $6
+            where
+                actor_id = $1
+            returning actor_id
+        `, [
+            actor_id,
+            firstname,
+            lastname,
+            middlename,
+            rank,
+            experience
+        ]);
+        if (res.rows && res.rows[0] && (res = res.rows[0])) return res.actor_id;
+        else return null;
     },
 
     remove: async (actor_id) => {

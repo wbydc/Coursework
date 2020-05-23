@@ -9,6 +9,10 @@ const logger = require('../components/logger')('api');
 
 const api = {
     actors: require('./actors'),
+    plays: require('./plays'),
+    shows: require('./shows'),
+    roles: require('./roles'),
+    works: require('./works'),
 };
 
 for (let model in api) {

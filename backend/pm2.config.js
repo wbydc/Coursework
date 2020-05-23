@@ -2,6 +2,9 @@ module.exports = {
     apps: [{
         name: "Coursework",
         cwd: __dirname,
-        script: __dirname + "/main.js"
+        script: __dirname + "/main.js",
+        watch: [
+            'app'
+        ]
     }]
 };

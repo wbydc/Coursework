@@ -11,36 +11,28 @@
                 <div>
                     <br>
                     &nbsp;
-                    <b-button variant="outline-primary" v-b-modal.addActor>
+                    <b-button variant="outline-primary" @click="preadd()">
                         Добавить
                     </b-button>
                 </div>
             </template>
             <template slot="actions" scope="props">
                 <div>
-                    <b-button variant="outline-primary" @click="remove(props.row.actor_id)">
+                    <b-button variant="outline-primary" @click="remove(props.row.show_id)">
                         <b-icon-trash />
                     </b-button>
                 </div>
             </template>
         </v-client-table>
 
-        <b-modal id="addActor" size="lg" centered title="Добавить актёра" @ok="addok">
+        <b-modal id="addShow" size="lg" centered title="Добавить постановку" @ok="addok">
             <b-form ref="addForm" @submit.stop.prevent="add" invalid-feedback="Все поля обязательны для заполнения">
-                <b-form-group size="md" label="Фамилия">
-                    <b-form-input type="text" v-model="modals.add.lastname" required></b-form-input>
+                <b-form-group size="md" label="Спектакль">
+                    <b-form-select v-model="modals.add.play_id" :options="modals.add.plays">
+                    </b-form-select>
                 </b-form-group>
-                <b-form-group size="md" label="Имя">
-                    <b-form-input type="text" v-model="modals.add.firstname" required></b-form-input>
-                </b-form-group>
-                <b-form-group size="md" label="Отчество">
-                    <b-form-input type="text" v-model="modals.add.middlename" required></b-form-input>
-                </b-form-group>
-                <b-form-group size="md" label="Звание">
-                    <b-form-input type="text" v-model="modals.add.rank" required></b-form-input>
-                </b-form-group>
-                <b-form-group size="md" label="Опыт">
-                    <b-form-input type="number" v-model="modals.add.experience" required></b-form-input>
+                <b-form-group size="md" label="Дата">
+                    <b-form-input type="date" v-model="modals.add.date" required></b-form-input>
                 </b-form-group>
             </b-form>
         </b-modal>
@@ -55,18 +47,16 @@
             return {
                 breadcrumbs: [
                     {
-                        text: 'Актёры',
-                        href: '/actors',
+                        text: 'Постановки',
+                        href: '/shows',
                         active: true
                     }
                 ],
                 datatable: {
                     columns: [
-                        "actor_id",
-                        "firstname",
-                        "lastname",
-                        "rank",
-                        "experience",
+                        "show_id",
+                        "name",
+                        "date",
                         "actions"
                     ],
                     data: [],
@@ -77,11 +67,9 @@
                 modals: {
                     add: {
                         state: null,
-                        lastname: '',
-                        firstname: '',
-                        middlename: '',
-                        rank: '',
-                        experience: '',
+                        plays: [],
+                        play_id: null,
+                        date: '',
                     },
                 },
             }
@@ -91,22 +79,29 @@
         },
         methods: {
             async loadData(data = {}) {
-                let dataSet = await api('actors/getAll', {
+                let dataSet = await api('shows/getAll', {
                     params: data
                 });
 
-                dataSet = dataSet.sort((a, b) => b.actor_id - a.actor_id).map(item => {
+                dataSet = dataSet.sort((a, b) => b.show_id - a.show_id).map(item => {
                     return {
-                        actor_id: item.actor_id,
-                        firstname: item.firstname,
-                        lastname: item.lastname,
-                        rank: item.rank,
-                        experience: item.experience + ' лет',
+                        show_id: item.show_id,
+                        name: item.name,
+                        date: new Date(item.date * 1000).toLocaleDateString(),
                         actions: ''
                     }
                 })
 
                 this.datatable.data = dataSet
+            },
+
+            async preadd() {
+                let plays = await api('plays/getList')
+                this.modals.add.plays = plays.map(play => ({
+                    value: play.play_id,
+                    text: play.name
+                }))
+                this.$bvModal.show('addShow')
             },
 
             addok(event) {
@@ -118,12 +113,15 @@
                     return
                 }
 
-                let data = this.modals.add
-                data.experience = parseInt(data.experience)
+                let data = {
+                    play_id: parseInt(this.modals.add.play_id),
+                    date: this.modals.add.date
+                }
+                data.date = Math.floor((new Date(...data.date.split(':').reverse()) || Date.now()) / 1000);
+                
+                await api('shows/create', data)
 
-                await api('actors/create', data)
-
-                this.$bvModal.hide('addActor');
+                this.$bvModal.hide('addShow');
                 this.loadData();
             },
 
@@ -131,9 +129,9 @@
                 return this.modals.add.state = this.$refs.addForm.checkValidity();
             },
 
-            async remove(actor_id) {
-                await api('actors/remove', {
-                    actor_id
+            async remove(show_id) {
+                await api('shows/remove', {
+                    show_id
                 })
                 this.loadData()
             }

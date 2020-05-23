@@ -1,5 +1,9 @@
 <template>
-  <b-breadcrumb :items="breadcrumbs"></b-breadcrumb>
+  <div>
+    <b-breadcrumb :items="breadcrumbs"></b-breadcrumb>
+
+    <h2>Hello Home!</h2>
+  </div>
 </template>
 
 <script>
@@ -8,7 +12,7 @@
       return {
         breadcrumbs: [
           {
-            text: 'Home',
+            text: 'Главная',
             href: '/',
             active: true
           }

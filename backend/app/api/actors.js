@@ -30,4 +30,11 @@ module.exports = {
 
         return Actor.create(firstname, lastname, middlename, rank, experience);
     },
+
+    async remove({
+        actor_id
+    }) {
+        if (!actor_id || typeof actor_id !== 'number') throw new ValidationError('actor_id');
+        return Actor.remove(actor_id);
+    }
 }

@@ -5,7 +5,7 @@
  * @returns {Promise} результат запроса
  */
 export default async function api(path, data, method = 'POST') {
-    path = 'api/' + path;
+    path = '/coursework/api/' + path;
     let result = await fetch(path, {
         method,
         body: JSON.stringify(data),
