@@ -40,6 +40,11 @@ module.exports = {
         return result;
     },
 
+    getCount: async () => {
+        let result = (await db.query(`select count(*) as c from roles`)).rows[0].c;
+        return result;
+    },
+
     getList: async () => {
         let result = (await db.query(`
             select

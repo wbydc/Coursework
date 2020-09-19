@@ -18,6 +18,9 @@
             </template>
             <template slot="actions" scope="props">
                 <div>
+                    <b-button variant="outline-primary" @click="alert(props.row.actor_id)">
+                        <b-icon-pencil />
+                    </b-button>
                     <b-button variant="outline-primary" @click="remove(props.row.show_id)">
                         <b-icon-trash />
                     </b-button>

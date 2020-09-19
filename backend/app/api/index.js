@@ -8,6 +8,7 @@ const {
 const logger = require('../components/logger')('api');
 
 const api = {
+    home: require('./home'),
     actors: require('./actors'),
     plays: require('./plays'),
     shows: require('./shows'),

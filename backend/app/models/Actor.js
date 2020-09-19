@@ -33,6 +33,11 @@ module.exports = {
         return result;
     },
 
+    getCount: async () => {
+        let result = (await db.query(`select count(*) as c from actors`)).rows[0].c;
+        return result;
+    },
+
     getList: async () => {
         let result = (await db.query(`select actor_id, concat(firstname, ' ', lastname) as name from actors where actor_id > 0 order by actor_id desc`)).rows;
         return result;
